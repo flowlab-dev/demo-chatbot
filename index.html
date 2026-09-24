@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shiftbloom — support assistant demo</title>
+<meta name="description" content="A support assistant that answers only from a company's own help centre, shows its source, and says when it does not know.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2324685A'/><path d='M8 11h16M8 16h16M8 21h9' stroke='white' stroke-width='2.6' stroke-linecap='round'/></svg>">
+</head>
+<body>
+
+
+<!-- flowlab-band -->
+<style>.fl-band{margin:0;max-width:none;box-sizing:border-box;padding:.5rem 1rem;background:#15171c;color:#f1f1ec;font:500 .875rem/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;position:relative;z-index:10}
+.fl-band a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+.fl-band a:focus-visible{outline:2px solid #9db2ff;outline-offset:2px;border-radius:2px}
+.fl-band__more{white-space:nowrap}</style>
+<p class="fl-band" role="note">Self-initiated demo by <a href="https://flowlab-dev.github.io/work/support-assistant/">Flow Lab</a>. Shiftbloom is invented.</p>
+<!-- /flowlab-band -->
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="28" height="28"><rect width="32" height="32" rx="7" fill="currentColor"/><path d="M8 11h16M8 16h16M8 21h9" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>
+      </span>
+      <span class="brand__name">Shiftbloom</span>
+      <span class="tag">Portfolio demo</span>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme">
+      <span class="theme-toggle__dot" aria-hidden="true"></span>
+      <span id="themeLabel">Dark</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div class="hero__copy">
+      <h1>The rota your team<br>actually reads.</h1>
+      <p class="lede">Shiftbloom plans shifts for cafés and restaurants. Its support assistant answers from the company help centre — and only from there.</p>
+
+      <div class="rota" role="img" aria-label="Example schedule for Tuesday: Nadia bar 07:00 to 15:00, Petar kitchen 08:00 to 16:00, Lena floor 11:00 to 19:00, Sam bar 15:00 to 23:00">
+        <div class="rota__head">
+          <span class="rota__day">Tue 22 Sep</span>
+          <span class="rota__meta">4 on shift · labour 26.4%</span>
+        </div>
+        <ul class="rota__list">
+          <li class="shift shift--bar"><span class="shift__who">Nadia</span><span class="shift__role">Bar</span><span class="shift__time">07:00–15:00</span></li>
+          <li class="shift shift--kitchen"><span class="shift__who">Petar</span><span class="shift__role">Kitchen</span><span class="shift__time">08:00–16:00</span></li>
+          <li class="shift shift--floor"><span class="shift__who">Lena</span><span class="shift__role">Floor</span><span class="shift__time">11:00–19:00</span></li>
+          <li class="shift shift--bar"><span class="shift__who">Sam</span><span class="shift__role">Bar</span><span class="shift__time">15:00–23:00</span></li>
+        </ul>
+      </div>
+
+      <p class="disclaimer">Shiftbloom is an invented company, written for this demonstration. Every fact the assistant states comes from the 33 help-centre sections published on this page.</p>
+    </div>
+
+    <div class="assistant" id="assistant">
+      <div class="assistant__head">
+        <div>
+          <p class="assistant__title">Shiftbloom support</p>
+          <p class="assistant__status"><span class="pulse" aria-hidden="true"></span>Answers from the help centre, updated 18 Sep 2026</p>
+        </div>
+        <button type="button" class="linkish" id="resetChat">Start over</button>
+      </div>
+
+      <div class="thread" id="thread" role="log" aria-live="polite" aria-label="Conversation with the Shiftbloom support assistant"></div>
+
+      <div class="suggestions" id="suggestions" aria-label="Example questions"></div>
+
+      <form class="composer" id="composer" autocomplete="off">
+        <label class="visually-hidden" for="question">Ask the assistant a question</label>
+        <input id="question" name="question" type="text" placeholder="Ask about pricing, shifts, payroll, data…" maxlength="200">
+        <button type="submit" id="send">Ask</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="band wrap" id="grounding">
+    <h2>Three answers, three honest outcomes</h2>
+    <p class="section-lede">Most complaints about support bots come from one habit: inventing an answer rather than admitting a gap. In this demo the assistant has no generative step, so it can only do one of three things. In a real project the same rules wrap a language model, so answers stay grounded in your documents.</p>
+
+    <div class="states">
+      <article class="state">
+        <p class="state__name"><span class="dot dot--answer" aria-hidden="true"></span>It answers</p>
+        <p>The question matches a help-centre section closely enough. The reply is that section's text, with the source printed underneath.</p>
+        <button class="try" type="button" data-ask="How much does Shiftbloom cost per month?">Try “How much does Shiftbloom cost per month?”</button>
+      </article>
+      <article class="state">
+        <p class="state__name"><span class="dot dot--clarify" aria-hidden="true"></span>It asks which topic you mean</p>
+        <p>The topic is in the help centre but the exact question is not — there is nothing about commission. Rather than pass off a nearby page as the answer, it offers the closest topics and lets you choose.</p>
+        <button class="try" type="button" data-ask="what commission do you take on card payments">Try “what commission do you take on card payments”</button>
+      </article>
+      <article class="state">
+        <p class="state__name"><span class="dot dot--unknown" aria-hidden="true"></span>It says it does not know</p>
+        <p>Nothing in the help centre covers the question. It says so, names the word it did not recognise, and offers a human.</p>
+        <button class="try" type="button" data-ask="do you have a loyalty program for customers">Try “do you have a loyalty program for customers”</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="band wrap" id="evaluation">
+    <div class="eval__head">
+      <div>
+        <h2>Checked, not promised</h2>
+        <p class="section-lede">A fixed set of questions runs against the assistant on every change: real phrasings for things the help centre covers, plus questions it must not answer. Run it here, in your browser.</p>
+      </div>
+      <button class="primary" type="button" id="runEval">Run the test set</button>
+    </div>
+    <div class="eval" id="evalResult" aria-live="polite">
+      <p class="eval__idle">Not run yet.</p>
+    </div>
+  </section>
+
+  <section class="band wrap" id="knowledge">
+    <h2>What the assistant was given</h2>
+    <p class="section-lede">Nothing else. Pick any line to ask it.</p>
+    <div class="kb" id="kb"></div>
+  </section>
+
+  <section class="band wrap" id="delivery">
+    <h2>What this looks like as a project</h2>
+    <div class="delivery">
+      <div>
+        <h3>Build</h3>
+        <p>Your help centre, PDFs, policies and past support replies become the knowledge base. The assistant is embedded on your site and in your help centre, in your own colours.</p>
+      </div>
+      <div>
+        <h3>Proof</h3>
+        <p>You get the question set as a file you can read: what it must answer, what it must refuse. It runs on every content change, so a new price never leaves an old answer behind.</p>
+      </div>
+      <div>
+        <h3>Every month after</h3>
+        <p>A short report of the questions it could not answer — the gaps in your own documentation — plus the content updates and a re-run of the test set.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__inner">
+    <p>Portfolio demonstration. Shiftbloom, its staff, prices and policies are invented for this page.</p>
+    <p>Runs entirely in your browser: no server, no keys, no accounts.</p>
+  </div>
+</footer>
+
+<script src="assets/engine.js"></script>
+<script src="data/knowledge-base.js"></script>
+<script src="tests/eval-questions.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
